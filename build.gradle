@@ -1,0 +1,29 @@
+plugins {
+  id 'java'
+  id 'application'
+}
+
+group = "jrpl"
+version = "0.1.0"
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(21)
+  }
+}
+
+application {
+  mainClass = "jrpl.Main"
+}
+
+repositories {
+  mavenCentral()
+ }
+
+dependencies {
+  testImplementation "org.junit.jupiter:junit-jupiter:5.11.0"
+}
+
+tasks.test {
+  useJUnitPlatform()
+}
