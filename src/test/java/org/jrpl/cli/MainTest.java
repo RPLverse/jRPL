@@ -6,6 +6,7 @@
 
 package org.jrpl.cli;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -16,11 +17,12 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CliGeneratesClassTest {
+class MainTest {
 
   // Test following the AAA (Arrange–Act–Assert) pattern
   @Test
-  void generatesAndLoadsNoOpClasswithRunAndMain() throws Exception {
+  @DisplayName("Generates and loads a no-op class with run() and main()")
+  void generatesAndLoadsNoOpClassWithRunAndMain() throws Exception {
 
     // Arrange: prepare a temporary .rpl input and output directory
     Path tmp = Files.createTempDirectory("jrpl-test-");

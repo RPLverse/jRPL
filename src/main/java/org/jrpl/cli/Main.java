@@ -10,7 +10,6 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -26,6 +25,7 @@ import java.time.Instant;
  * <ul>
  *   <li>a default constructor</li>
  *   <li>a public static {@code run()} method with an empty body</li>
+ *   <li>a public static {@code main(String[])} method delegating to {@code run()}</li>
  * </ul>
  * This no-op bytecode will be replaced with the full RPL to bytecode compiler
  */
@@ -81,11 +81,11 @@ public final class Main implements Opcodes {
         for (int i = 1; i < args.length; i++) {
             switch (args[i]) {
                 case "--out-dir" -> {
-                    if (i + 1 >= args.length) die("--out-dir requires a value");
+                    if (i + 1 >= args.length) die("--out-dir requires a value", EXIT_USAGE_ERROR);
                     outDir = Path.of(args[++i]);
                 }
                 case "--class-name" -> {
-                    if (i + 1 >= args.length) die("--class-name requires a value");
+                    if (i + 1 >= args.length) die("--class-name requires a value", EXIT_USAGE_ERROR);
                     classBinaryName = args[++i];
                 }
                 default -> { /* ignore unknown flags for now */ }
@@ -97,7 +97,7 @@ public final class Main implements Opcodes {
 
         // Derive class name if not provided: org.jrpl.gen.<BaseName>_<timestamp>
         if (classBinaryName == null) {
-            String base = stripExt(input.getFileName().toString());
+            String base = removeExtension(input.getFileName().toString());
             String ts = Long.toString(Instant.now().toEpochMilli(), 36);
             classBinaryName = "org.jrpl.gen." + sanitize(base) + "_" + ts;
         }
@@ -116,15 +116,16 @@ public final class Main implements Opcodes {
     }
 
     /**
-     * Utility method to print the error message to standard error and exit with code EXIT_INVALID_INPUT
+     * Utility method to print the error message to standard error and exit with an exitCode
      *
      * @param msg error message to print
+     * @param exitCode process exit code to use
      */
-    private static void die(String msg) {
+    private static void die(String msg, int exitCode) {
 
-        // Print the error message and exit with code EXIT_INVALID_INPUT
+        // Print the error message and exit
         System.err.println(msg);
-        System.exit(EXIT_INVALID_INPUT);
+        System.exit(exitCode);
     }
 
     /**
@@ -133,7 +134,7 @@ public final class Main implements Opcodes {
      * @param name file name, e.g. {@code "hello.rpl"}
      * @return the base name without extension, e.g. {@code "hello"}
      */
-    private static String stripExt(String name) {
+    private static String removeExtension(String name) {
 
         // Find the last '.' in the filename and remove the extension
         int i = name.lastIndexOf('.');
@@ -186,7 +187,7 @@ public final class Main implements Opcodes {
         // Create a ClassWriter asking ASM to compute stack map frames, max stack and max locals 
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
 
-        // Begin the class definition
+        // Begin the class definition (targeting Java 17 classfile; runs on 17+ including 21)
         cw.visit(V17, ACC_PUBLIC | ACC_FINAL, internal, null, "java/lang/Object", null);
 
         // Default constructor
