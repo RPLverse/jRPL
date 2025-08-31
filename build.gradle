@@ -3,7 +3,7 @@ plugins {
   id 'application'
 }
 
-group = "jrpl"
+group = "org.jrpl"
 version = "0.1.0"
 
 java {
@@ -13,7 +13,7 @@ java {
 }
 
 application {
-  mainClass = "jrpl.Main"
+  mainClass = "org.jrpl.cli.Main"
 }
 
 repositories {
@@ -21,9 +21,15 @@ repositories {
  }
 
 dependencies {
+  implementation 'org.ow2.asm:asm:9.7'
+  implementation 'org.ow2.asm:asm-commons:9.7'
   testImplementation "org.junit.jupiter:junit-jupiter:5.11.0"
 }
 
-tasks.test {
-  useJUnitPlatform()
+testing {
+  suites {
+    test {
+      useJUnitJupiter()
+    }
+  }
 }
