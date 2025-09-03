@@ -15,34 +15,31 @@ import java.nio.file.Path;
 import java.time.Instant;
 
 /**
- * jRPL command-line interface (CLI)
- * <p>
- * This class provides the entry point for the compiler
- * <p>
+ * jRPL command-line interface (CLI).
+ * <p>This class provides the entry point for the compiler.
  * It accepts an {@code .rpl} source file, and generates an equivalent bytecode {@code .class} file
- * <p>
  * Currently, the generated class is a no-op bytecode containing:
  * <ul>
  *   <li>a default constructor</li>
  *   <li>a public static {@code run()} method with an empty body</li>
  *   <li>a public static {@code main(String[])} method delegating to {@code run()}</li>
  * </ul>
- * This no-op bytecode will be replaced with the full RPL to bytecode compiler
+ * This no-op bytecode will be replaced with the full RPL to bytecode compiler.
  */
 public final class Main implements Opcodes {
 
     /**
-     * Exit code used when the program arguments are invalid or missing
+     * Exit code used when the program arguments are invalid or missing.
      */
     private static final int EXIT_USAGE_ERROR = 1;
 
     /**
-     * Exit code used when the input .rpl file is invalid or missing
+     * Exit code used when the input .rpl file is invalid or missing.
      */
     private static final int EXIT_INVALID_INPUT = 2;
 
     /**
-     * Hidden constructor to prevent instantiation
+     * Hidden constructor to prevent instantiation.
      */
     private Main() {
 
@@ -50,14 +47,14 @@ public final class Main implements Opcodes {
     }
 
     /**
-     * Program entry point
+     * Program entry point.
      *
      * @param args command-line arguments:
-     *             <ul>
-     *               <li>{@code <file.rpl>} — input file to compile</li>
-     *               <li>{@code --out-dir <dir>} — (optional) output directory for .class file</li>
-     *               <li>{@code --class-name <BinaryName>} — (optional) fully qualified binary class name</li>
-     *             </ul>
+     * <ul>
+     *   <li>{@code <file.rpl>} — input file to compile</li>
+     *   <li>{@code --out-dir <dir>} — (optional) output directory for .class file</li>
+     *   <li>{@code --class-name <BinaryName>} — (optional) fully qualified binary class name</li>
+     * </ul>
      * @throws Exception if reading the file or writing the class fails
      */
     public static void main(String[] args) throws Exception {
@@ -93,7 +90,7 @@ public final class Main implements Opcodes {
         }
 
         // Read the .rpl (currently unused, parsing will be implemented later)
-        String src = Files.readString(input);
+        String s = Files.readString(input);
 
         // Derive class name if not provided: org.jrpl.gen.<BaseName>_<timestamp>
         if (classBinaryName == null) {
@@ -116,7 +113,7 @@ public final class Main implements Opcodes {
     }
 
     /**
-     * Utility method to print the error message to standard error and exit with an exitCode
+     * Utility method to print the error message to standard error and exit with an exitCode.
      *
      * @param msg error message to print
      * @param exitCode process exit code to use
@@ -129,7 +126,7 @@ public final class Main implements Opcodes {
     }
 
     /**
-     * Remove file extension from a file name
+     * Remove file extension from a file name.
      *
      * @param name file name, e.g. {@code "hello.rpl"}
      * @return the base name without extension, e.g. {@code "hello"}
@@ -142,10 +139,9 @@ public final class Main implements Opcodes {
     }
 
     /**
-     * Sanitize a string to be usable as a Java identifier fragment
-     * <p>
-     * Replaces non-alphanumeric characters with underscores and ensures
-     * the first character is a valid identifier start
+     * Sanitize a string to be usable as a Java identifier fragment.
+     * <p>Replaces non-alphanumeric characters with underscores and ensures
+     * the first character is a valid identifier start.
      *
      * @param s input string
      * @return a sanitized identifier fragment
@@ -161,8 +157,7 @@ public final class Main implements Opcodes {
     }
 
     /**
-     * Generate a minimal no-op bytecode class using ASM
-     * <p>
+     * Generate a minimal no-op bytecode class using ASM.
      * The generated class has the following structure:
      * <ul>
      *   <li>a public default constructor that calls {@code super()}</li>

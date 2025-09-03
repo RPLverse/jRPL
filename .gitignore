@@ -45,3 +45,6 @@ GitHubtoken
 Gradleinstallation
 Jenkinsinstallation
 Jenkinspassword
+
+# Local backup
+*.old
