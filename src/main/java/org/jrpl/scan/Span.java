@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2025 Massimo Costantini
- * Licensed under the Apache License, Version 2.0
- * See the LICENSE file in the project root for full license information
+/**
+ * Copyright (c) 2025 Massimo Costantini.
+ * Licensed under the Apache License, Version 2.0.
+ * See the LICENSE file in the project root for full license information.
  */
 
 package org.jrpl.scan;
@@ -9,11 +9,12 @@ package org.jrpl.scan;
 /**
  * Represents a half-open interval of source text,
  * defined by a start and end position.
- * Spans are used to annotate tokens and diagnostics,
+ *
+ * <p>Spans are used to annotate tokens and diagnostics,
  * so that error messages can point to the relevant
  * region of code.
 *
- * <h2>Example</h2>
+ * <h2>Example:</h2>
  * <pre>{@code
  * Position start = new Position(0, 1, 1);
  * Position end   = new Position(2, 1, 3);

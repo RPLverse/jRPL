@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2025 Massimo Costantini
- * Licensed under the Apache License, Version 2.0
- * See the LICENSE file in the project root for full license information
+/**
+ * Copyright (c) 2025 Massimo Costantini.
+ * Licensed under the Apache License, Version 2.0.
+ * See the LICENSE file in the project root for full license information.
  */
 
 package org.jrpl.cli;
@@ -16,6 +16,7 @@ import java.time.Instant;
 
 /**
  * jRPL command-line interface (CLI).
+ *
  * <p>This class provides the entry point for the compiler.
  * It accepts an {@code .rpl} source file, and generates an equivalent bytecode {@code .class} file
  * Currently, the generated class is a no-op bytecode containing:

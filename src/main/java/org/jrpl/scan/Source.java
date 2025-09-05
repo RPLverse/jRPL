@@ -8,11 +8,12 @@ package org.jrpl.scan;
 
 /**
  * Character stream with line and column tracking.
- * The lexer uses {@code Source} to read characters one at a time
+ *
+ * <p>The lexer uses {@code Source} to read characters one at a time
  * while keeping track of the current position.
  * It also supports simple matching and slicing substrings.
  *
- * <h2>Example</h2>
+ * <h2>Example:</h2>
  * <pre>{@code
  * Source source = new Source("12 + 34");
  *
