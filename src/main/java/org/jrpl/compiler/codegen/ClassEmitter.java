@@ -20,7 +20,7 @@ import static org.objectweb.asm.Opcodes.*;
  *
  * <p>The generated class contains:
  * <ul>
- *   <li>{@code public static void run(org.jrpl.runtime.S)}</li>
+ *   <li>{@code public static void run(org.jrpl.runtime.ExecStack)}</li>
  *   <li>(optional) {@code public static void main(String[])} for direct execution</li>
  * </ul>
  */
@@ -67,7 +67,7 @@ public final class ClassEmitter {
         ctor.visitMaxs(0, 0);
         ctor.visitEnd();
 
-        // run(S) method
+        // run(ExecStack) method
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC | ACC_STATIC, "run",
                 "(Lorg/jrpl/runtime/S;)V", null, null);
         mv.visitCode();
@@ -102,7 +102,7 @@ public final class ClassEmitter {
      *
      * <p>Equivalent Java code generated:
      * <pre>{@code
-     * S s = new S();
+     * ExecStack stack = new ExecStack();
      * for (int i = 0; i < args.length; i++) {
      *     s.push(Double.parseDouble(args[i]));
      * }
@@ -121,11 +121,11 @@ public final class ClassEmitter {
                 ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
         mv.visitCode();
 
-        // S s = new S();
-        mv.visitTypeInsn(NEW, "org/jrpl/runtime/S");
+        // ExecStack stack = new ExecStack();
+        mv.visitTypeInsn(NEW, "org/jrpl/runtime/ExecStack");
         mv.visitInsn(DUP);
-        mv.visitMethodInsn(INVOKESPECIAL, "org/jrpl/runtime/S", "<init>", "()V", false);
-        mv.visitVarInsn(ASTORE, 1);                  // local1 = s
+        mv.visitMethodInsn(INVOKESPECIAL, "org/jrpl/runtime/ExecStack", "<init>", "()V", false);
+        mv.visitVarInsn(ASTORE, 1);                  // local1 = stack
 
         // int i = 0;
         mv.visitInsn(ICONST_0);
@@ -152,7 +152,7 @@ public final class ClassEmitter {
         mv.visitInsn(AALOAD);                        // args[i]
         mv.visitMethodInsn(INVOKESTATIC, "java/lang/Double",
                 "parseDouble", "(Ljava/lang/String;)D", false);
-        mv.visitMethodInsn(INVOKEVIRTUAL, "org/jrpl/runtime/S",
+        mv.visitMethodInsn(INVOKEVIRTUAL, "org/jrpl/runtime/ExecStack",
                 "push", "(D)V", false);
 
         // i++;
@@ -165,14 +165,14 @@ public final class ClassEmitter {
         // run(s);
         mv.visitVarInsn(ALOAD, 1);
         mv.visitMethodInsn(INVOKESTATIC, internalClassName,
-                "run", "(Lorg/jrpl/runtime/S;)V", false);
+                "run", "(Lorg/jrpl/runtime/Sstack;)V", false);
 
         // if (s.size() > 0) println(pop()) else println("Stack empty")
         Label hasItems = new Label();
         Label done     = new Label();
 
         mv.visitVarInsn(ALOAD, 1);
-        mv.visitMethodInsn(INVOKEVIRTUAL, "org/jrpl/runtime/S",
+        mv.visitMethodInsn(INVOKEVIRTUAL, "org/jrpl/runtime/ExecStack",
                 "size", "()I", false);
         mv.visitJumpInsn(IFGT, hasItems);
 
@@ -183,11 +183,11 @@ public final class ClassEmitter {
                 "println", "(Ljava/lang/String;)V", false);
         mv.visitJumpInsn(GOTO, done);
 
-        // then: System.out.println(s.pop());
+        // then: System.out.println(stack.pop());
         mv.visitLabel(hasItems);
         mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
         mv.visitVarInsn(ALOAD, 1);
-        mv.visitMethodInsn(INVOKEVIRTUAL, "org/jrpl/runtime/S",
+        mv.visitMethodInsn(INVOKEVIRTUAL, "org/jrpl/runtime/ExecStack",
                 "pop", "()D", false);
         mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream",
                 "println", "(D)V", false);

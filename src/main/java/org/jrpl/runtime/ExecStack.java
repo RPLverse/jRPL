@@ -16,34 +16,34 @@ import java.util.Stack;
  * {@code 1.0} (true) or {@code 0.0} (false).
  * </p>
  */
-public final class S {
+public final class ExecStack {
 
     /** Underlying stack storage. */
-    private final Stack<Double> st = new Stack<>();
+    private final Stack<Double> stack = new Stack<>();
 
     /** Creates an empty stack. */
-    public S() {}
+    public ExecStack() {}
 
     /**
      * Pushes a value onto the stack.
      *
      * @param v value to push
      */
-    public void push(double v) { st.push(v); }
+    public void push(double v) { stack.push(v); }
 
     /**
      * Pops and returns the top value.
      *
      * @return the popped value
      */
-    public double pop() { return st.pop(); }
+    public double pop() { return stack.pop(); }
 
     /**
      * Returns (without popping) the top value.
      *
      * @return the value currently on top of the stack
      */
-    public double peek() { return st.peek(); }
+    public double peek() { return stack.peek(); }
 
     /** Duplicates the top value. */
     public void dup() { push(peek()); }
@@ -100,7 +100,7 @@ public final class S {
      * @return an array copy of the stack contents
      */
     public double[] toArray() {
-        return st.stream().mapToDouble(Double::doubleValue).toArray();
+        return stack.stream().mapToDouble(Double::doubleValue).toArray();
     }
 
     /**
@@ -108,5 +108,5 @@ public final class S {
      *
      * @return number of items on the stack
      */
-    public int size() { return st.size(); }
+    public int size() { return stack.size(); }
 }
