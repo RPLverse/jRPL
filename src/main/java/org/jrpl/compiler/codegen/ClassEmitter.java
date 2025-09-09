@@ -69,7 +69,7 @@ public final class ClassEmitter {
 
         // run(ExecStack) method
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC | ACC_STATIC, "run",
-                "(Lorg/jrpl/runtime/S;)V", null, null);
+                "(Lorg/jrpl/runtime/ExecStack;)V", null, null);
         mv.visitCode();
         IrEmitter.emit(ir, mv);      // IR → bytecode
         mv.visitInsn(RETURN);        // return
@@ -102,7 +102,7 @@ public final class ClassEmitter {
      *
      * <p>Equivalent Java code generated:
      * <pre>{@code
-     * ExecStack stack = new ExecStack();
+     * ExecStack s = new ExecStack();
      * for (int i = 0; i < args.length; i++) {
      *     s.push(Double.parseDouble(args[i]));
      * }
@@ -121,11 +121,11 @@ public final class ClassEmitter {
                 ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
         mv.visitCode();
 
-        // ExecStack stack = new ExecStack();
+        // ExecStack s = new ExecStack();
         mv.visitTypeInsn(NEW, "org/jrpl/runtime/ExecStack");
         mv.visitInsn(DUP);
         mv.visitMethodInsn(INVOKESPECIAL, "org/jrpl/runtime/ExecStack", "<init>", "()V", false);
-        mv.visitVarInsn(ASTORE, 1);                  // local1 = stack
+        mv.visitVarInsn(ASTORE, 1);                  // local1 = s
 
         // int i = 0;
         mv.visitInsn(ICONST_0);
@@ -165,7 +165,7 @@ public final class ClassEmitter {
         // run(s);
         mv.visitVarInsn(ALOAD, 1);
         mv.visitMethodInsn(INVOKESTATIC, internalClassName,
-                "run", "(Lorg/jrpl/runtime/Sstack;)V", false);
+                "run", "(Lorg/jrpl/runtime/ExecStack;)V", false);
 
         // if (s.size() > 0) println(pop()) else println("Stack empty")
         Label hasItems = new Label();
@@ -183,7 +183,7 @@ public final class ClassEmitter {
                 "println", "(Ljava/lang/String;)V", false);
         mv.visitJumpInsn(GOTO, done);
 
-        // then: System.out.println(stack.pop());
+        // then: System.out.println(s.pop());
         mv.visitLabel(hasItems);
         mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
         mv.visitVarInsn(ALOAD, 1);
