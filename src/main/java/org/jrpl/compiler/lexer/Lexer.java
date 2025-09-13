@@ -6,7 +6,9 @@
 
 package org.jrpl.compiler.lexer;
 
-import org.jrpl.scan.*;
+import org.jrpl.scan.Position;
+import org.jrpl.scan.Source;
+import org.jrpl.scan.Span;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +30,6 @@ import java.util.List;
  */
 public final class Lexer {
     private final Source src;
-    private final List<Token> tokens = new ArrayList<>();
 
     /**
      * Creates a new lexer over the given source string.
@@ -46,79 +47,145 @@ public final class Lexer {
      * @return the complete token list
      */
     public List<Token> lex() {
+        List<Token> out = new ArrayList<>();
+        while (!src.eof()) {
+            skipWhitespaceAndComments();
+            if (src.eof()) break;
+
+            Position start = src.position();
+            char c = src.cursor();
+
+            // delimiters and multi-char operators that start with '<' or '>'
+            if (c == '<') {
+                src.next(); // consume first '<'
+                if (src.match('<')) {
+                    out.add(Token.of(TokenType.LSHIFT, "<<", span(start)));
+                } else if (src.match('=')) {
+                    out.add(Token.of(TokenType.LE, "<=", span(start)));
+                } else {
+                    out.add(Token.of(TokenType.LT, "<", span(start)));
+                }
+                continue;
+            }
+            if (c == '>') {
+                src.next(); // consume first '>'
+                if (src.match('>')) {
+                    out.add(Token.of(TokenType.RSHIFT, ">>", span(start)));
+                } else if (src.match('=')) {
+                    out.add(Token.of(TokenType.GE, ">=", span(start)));
+                } else {
+                    out.add(Token.of(TokenType.GT, ">", span(start)));
+                }
+                continue;
+            }
+
+            // equality / inequality
+            if (c == '=') {
+                src.next();
+                if (src.match('=')) {
+                    out.add(Token.of(TokenType.EQ, "==", span(start)));
+                } else {
+                    throw error("Unexpected '='; did you mean '=='?", start);
+                }
+                continue;
+            }
+            if (c == '!') {
+                src.next();
+                if (src.match('=')) {
+                    out.add(Token.of(TokenType.NE, "!=", span(start)));
+                } else {
+                    throw error("Unexpected '!'; did you mean '!='?", start);
+                }
+                continue;
+            }
+
+            // single-char operators
+            if (c == '+') { src.next(); out.add(Token.of(TokenType.PLUS, "+", span(start))); continue; }
+            if (c == '-') { src.next(); out.add(Token.of(TokenType.MINUS, "-", span(start))); continue; }
+            if (c == '*') { src.next(); out.add(Token.of(TokenType.STAR,  "*", span(start))); continue; }
+            if (c == '/') { src.next(); out.add(Token.of(TokenType.SLASH, "/", span(start))); continue; }
+            if (c == '^') { src.next(); out.add(Token.of(TokenType.CARET, "^", span(start))); continue; }
+
+            // numbers
+            if (Character.isDigit(c)) {
+                out.add(readNumber(start));
+                continue;
+            }
+
+            // identifiers (keywords)
+            if (Character.isLetter(c)) {
+                out.add(readKeyword(start));
+                continue;
+            }
+
+            throw error("Unexpected character: '" + c + "'", start);
+        }
+
+        out.add(Token.of(TokenType.EOF, "", span(src.position())));
+        return out;
+    }
+
+    /** Skip whitespace and ';' line comments. */
+    private void skipWhitespaceAndComments() {
         while (!src.eof()) {
             char c = src.cursor();
-            if (Character.isWhitespace(c)) {
+            if (Character.isWhitespace(c)) { src.next(); continue; }
+            if (c == ';') { // comment until newline
+                while (!src.eof() && src.next() != '\n') { /* skip */ }
+                continue;
+            }
+            break;
+        }
+    }
+
+    /** Read a NUMBER token (integer or decimal). */
+    private Token readNumber(Position start) {
+        boolean sawDot = false;
+        while (!src.eof()) {
+            char ch = src.cursor();
+            if (Character.isDigit(ch)) {
                 src.next();
-            } else if (c == ';') { // comment
-                while (!src.eof() && src.next() != '\n') {}
-            } else if (Character.isDigit(c)) {
-                tokens.add(lexNumber());
-            } else if (c == '<' && src.match('<')) {
-                tokens.add(Token.of(TokenType.LSHIFT, "<<", span(2)));
-            } else if (c == '>' && src.match('>')) {
-                tokens.add(Token.of(TokenType.RSHIFT, ">>", span(2)));
+            } else if (ch == '.' && !sawDot) {
+                sawDot = true;
+                src.next();
             } else {
-                tokens.add(lexSymbolOrOperator());
+                break;
             }
         }
-        tokens.add(Token.of(TokenType.EOF, "", span(0)));
-        return tokens;
+        String lexeme = src.slice(start);
+        double value = Double.parseDouble(lexeme);
+        return Token.number(lexeme, value, new Span(start, src.position()));
     }
 
-    private Token lexNumber() {
-        Position start = src.position();
-        while (!src.eof() && (Character.isDigit(src.cursor()) || src.cursor() == '.')) {
-            src.next();
+    /** Read an identifier and classify it as a keyword token. */
+    private Token readKeyword(Position start) {
+        while (!src.eof()) {
+            char ch = src.cursor();
+            if (Character.isLetterOrDigit(ch) || ch == '_') {
+                src.next();
+            } else break;
         }
-        String text = src.slice(start);
-        double value = Double.parseDouble(text);
-        return Token.number(text, value, new Span(start, src.position()));
-    }
-
-    private Token lexSymbolOrOperator() {
-        Position start = src.position();
-        char c = src.next();
-        switch (c) {
-            case '+' -> { return Token.of(TokenType.PLUS, "+", span(1)); }
-            case '-' -> { return Token.of(TokenType.MINUS, "-", span(1)); }
-            case '*' -> { return Token.of(TokenType.STAR, "*", span(1)); }
-            case '/' -> { return Token.of(TokenType.SLASH, "/", span(1)); }
-            case '^' -> { return Token.of(TokenType.CARET, "^", span(1)); }
-            case '>' -> {
-                if (src.match('=')) return Token.of(TokenType.GE, ">=", span(2));
-                else return Token.of(TokenType.GT, ">", span(1));
-            }
-            case '<' -> {
-                if (src.match('=')) return Token.of(TokenType.LE, "<=", span(2));
-                else return Token.of(TokenType.LT, "<", span(1));
-            }
-            case '=' -> {
-                if (src.match('=')) return Token.of(TokenType.EQ, "==", span(2));
-            }
-            case '!' -> {
-                if (src.match('=')) return Token.of(TokenType.NE, "!=", span(2));
-            }
-        }
-        // identifier-like keywords
-        while (!src.eof() && Character.isAlphabetic(src.cursor())) {
-            src.next();
-        }
-        String word = src.slice(start).toUpperCase();
-        return switch (word) {
-            case "IF" -> Token.of(TokenType.IF, word, span(word.length()));
-            case "THEN" -> Token.of(TokenType.THEN, word, span(word.length()));
-            case "ELSE" -> Token.of(TokenType.ELSE, word, span(word.length()));
-            case "END" -> Token.of(TokenType.END, word, span(word.length()));
-            case "DUP" -> Token.of(TokenType.DUP, word, span(word.length()));
-            case "DROP" -> Token.of(TokenType.DROP, word, span(word.length()));
-            case "SWAP" -> Token.of(TokenType.SWAP, word, span(word.length()));
-            default -> throw new IllegalArgumentException("Unknown token: " + word);
+        String word = src.slice(start);
+        String upper = word.toUpperCase();
+        TokenType tt = switch (upper) {
+            case "IF"   -> TokenType.IF;
+            case "THEN" -> TokenType.THEN;
+            case "ELSE" -> TokenType.ELSE;
+            case "END"  -> TokenType.END;
+            case "DUP"  -> TokenType.DUP;
+            case "DROP" -> TokenType.DROP;
+            case "SWAP" -> TokenType.SWAP;
+            default -> throw error("Unknown identifier: " + word, start);
         };
+        return Token.of(tt, word, new Span(start, src.position()));
     }
 
-    private Span span(int length) {
-        return new Span(new Position(src.position().index() - length, src.position().line(),
-                src.position().column() - length), src.position());
+    /** Create a span from a start position to the current cursor. */
+    private Span span(Position start) {
+        return new Span(start, src.position());
+    }
+
+    private IllegalArgumentException error(String msg, Position at) {
+        return new IllegalArgumentException(msg + " at " + at);
     }
 }
