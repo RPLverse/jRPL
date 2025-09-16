@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025 Massimo Costantini.
  * Licensed under the Apache License, Version 2.0.
  * See the LICENSE file in the project root for full license information.
@@ -19,13 +19,19 @@ import static org.jrpl.compiler.lexer.TokenType.*;
  *
  * <p>Grammar:
  * <pre>
- * program := ({@code <<})? instr* ({@code >>})? EOF
+ * program := ( {@code <<} instr* {@code >>} )? EOF
  * instr   := NUMBER
  *         |  DUP | DROP | SWAP
  *         |  {@code +} | {@code -} | {@code *} | {@code /} | {@code ^}
  *         |  {@literal >} | {@literal <} | {@code >=} | {@code <=} | {@code ==} | {@code !=}
  *         |  IF THEN instr* (ELSE instr*)? END
  * </pre>
+ *
+ * <p>Notes:
+ * <ul>
+ *   <li>If {@code <<} is present, a matching {@code >>} is required.</li>
+ *   <li>If {@code <<} is absent, a stray {@code >>} is rejected.</li>
+ * </ul>
  */
 public final class Parser {
 
@@ -50,15 +56,26 @@ public final class Parser {
      */
     public List<Instruction> parseProgram() {
 
-        // Optional '<<'
-        if (match(LSHIFT)) { /* consume */ }
+        // Track whether the program is delimited with '<<' ... '>>'
+        boolean hasLShift = match(LSHIFT);
+
         List<Instruction> out = new ArrayList<>();
+
+        // Parse instructions until '>>' or EOF
         while (!check(RSHIFT) && !check(EOF)) {
             out.add(parseInstr());
         }
 
-        // Optional '>>'
-        if (match(RSHIFT)) { /* consume */ }
+        // Enforce delimiter pairing rules
+        if (hasLShift) {
+            // If program started with '<<', require a closing '>>'
+            expect(RSHIFT, "'>>'");
+        } else if (check(RSHIFT)) {
+            // Found '>>' without a matching '<<'
+            throw error("Unexpected '>>' without matching '<<'");
+        }
+
+        // End of input is always required
         expect(EOF, "end of input");
         return out;
     }
