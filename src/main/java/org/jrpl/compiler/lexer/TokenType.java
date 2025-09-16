@@ -7,76 +7,119 @@
 package org.jrpl.compiler.lexer;
 
 /**
- * Kinds of lexical tokens produced by the minimal jRPL lexer.
+ * Enumeration of all token kinds recognized by the lexer.
  *
- * <p>This enumeration groups the token categories recognized by the lexer.
- * It is intentionally compact and tailored to the current subset of the language.
+ * <p>Includes keywords, operators, delimiters, numbers and EOF.
  */
 public enum TokenType {
 
-    /** Opening program delimiter {@code <<}. */
+    /** 
+     * Delimiter: {@code <<} 
+     */ 
     LSHIFT,
 
-    /** Closing program delimiter {@code >>}. */
+    /** 
+     * Delimiter: {@code >>} 
+     */ 
     RSHIFT,
 
-    /** Keyword {@code IF}. Begins a conditional construct. */
+    /** 
+     * Keyword: {@code IF} 
+     */ 
     IF,
 
-    /** Keyword {@code THEN}. Starts the "then" branch of a conditional. */
+    /** 
+     * Keyword: {@code THEN} 
+     */ 
     THEN,
 
-    /** Keyword {@code ELSE}. Starts the optional "else" branch of a conditional. */
+    /** 
+     * Keyword: {@code ELSE} 
+     */ 
     ELSE,
 
-    /** Keyword {@code END}. Closes a conditional construct. */
+    /** 
+     * Keyword: {@code END} 
+     */ 
     END,
 
-    /** Stack operation {@code DUP}: duplicate the top of stack. */
+    /** 
+     * Keyword: {@code DUP} 
+     */ 
     DUP,
 
-    /** Stack operation {@code DROP}: remove the top of stack. */
+    /** 
+     * Keyword: {@code DROP} 
+     */ 
     DROP,
 
-    /** Stack operation {@code SWAP}: swap the two topmost stack elements. */
+    /** 
+     * Keyword: {@code SWAP} 
+     */ 
     SWAP,
 
-    /** Arithmetic operator {@code +} (addition). */
+    /** 
+     * Operator: {@code +} 
+     */ 
     PLUS,
 
-    /** Arithmetic operator {@code -} (subtraction). */
+    /** 
+     * Operator: {@code -} 
+     */ 
     MINUS,
 
-    /** Arithmetic operator {@code *} (multiplication). */
+    /** 
+     * Operator: {@code *} 
+     */ 
     STAR,
 
-    /** Arithmetic operator {@code /} (division). */
+    /** 
+     * Operator: {@code /} 
+     */ 
     SLASH,
 
-    /** Arithmetic operator {@code ^} (power). */
+    /** 
+     * Operator: {@code ^} 
+     */ 
     CARET,
 
-    /** Comparison operator {@literal >} (greater-than). */
+    /** 
+     * Operator: {@code >} 
+     */ 
     GT,
 
-    /** Comparison operator {@literal <} (less-than). */
+    /** 
+     * Operator: {@code <} 
+     */ 
     LT,
 
-    /** Comparison operator {@code >=} (greater-or-equal). */
+    /** 
+     * Operator: {@code >=} 
+     */ 
     GE,
 
-    /** Comparison operator {@code <=} (less-or-equal). */
+    /** 
+     * Operator: {@code <=} 
+     */ 
     LE,
 
-    /** Comparison operator {@code ==} (equal). */
+    /** 
+     * Operator: {@code ==} 
+     */ 
     EQ,
 
-    /** Comparison operator {@code !=} (not-equal). */
+    /** 
+     * Operator: {@code !=} 
+     */ 
     NE,
 
-    /** Numeric literal (integer or decimal), represented as a {@code double}. */
+    /** 
+     * Numeric literal 
+     */ 
     NUMBER,
 
-    /** End-of-input marker produced by the lexer. */
+    /** 
+     * End of file 
+     */ 
     EOF
 }

@@ -8,16 +8,8 @@ package org.jrpl.compiler.ir;
 
 /**
  * Marker interface for all intermediate representation (IR) instructions.
- * 
- * <p>The IR is designed to be stack-based, closely mirroring the semantics
- * of RPL and the runtime stack {@code S}.
  *
- * <h2>Design notes:</h2>
- * <ul>
- *   <li>Each IR node is immutable.</li>
- *   <li>IR nodes are kept minimal to simplify code generation.</li>
- *   <li>Interpretation and codegen can share the same IR tree.</li>
- * </ul>
+ * <p>The IR is stack-based to mirror RPL semantics and the {@code ExecStack} runtime.
  */
 public interface Instruction {
 }

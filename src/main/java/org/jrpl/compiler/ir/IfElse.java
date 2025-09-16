@@ -9,36 +9,36 @@ package org.jrpl.compiler.ir;
 import java.util.List;
 
 /**
- * Conditional execution of two branches depending on a boolean value.
+ * Conditional execution based on a boolean (1.0 = true, 0.0 = false) popped from the stack.
  *
- * <p>The runtime stack is expected to contain a value on top, interpreted
- * as {@code 0.0 = false}, {@code 1.0 = true}. This value is popped and used
- * as the branch condition.
+ * <p>Executes {@link #thenBranch} when true; executes {@link #elseBranch} when false (if present).</p>
  *
- * <h2>Semantics:</h2>
- * <ul>
- *   <li>If the condition is true execute {@link #thenBranch}.</li>
- *   <li>If the condition is false execute {@link #elseBranch} (if present).</li>
- * </ul>
- *
- * <p>Example RPL:</p>
- * <pre>
- *   IF THEN ... ELSE ... END
- * </pre>
+ * <p>Example RPL:
+ * <pre>{@code
+ *  IF THEN
+ *    66
+ *  ELSE
+ *    0
+ *  END
+ * }</pre>
  */
 public final class IfElse implements Instruction {
 
-    /** Instructions executed if condition is true. */
+    /**
+     * Instructions executed when the condition is true.
+     */
     public final List<Instruction> thenBranch;
 
-    /** Instructions executed if condition is false (may be null). */
+    /**
+     * Instructions executed when the condition is false (may be {@code null}).
+     */
     public final List<Instruction> elseBranch;
 
     /**
-     * Creates a conditional IR node with an optional else branch.
+     * Creates a new conditional IR node with an optional else-branch.
      *
-     * @param thenBranch instructions executed when condition is true
-     * @param elseBranch instructions executed when condition is false (nullable)
+     * @param thenBranch instructions executed when the condition is true
+     * @param elseBranch instructions executed when the condition is false (nullable)
      */
     public IfElse(List<Instruction> thenBranch, List<Instruction> elseBranch) {
         this.thenBranch = thenBranch;

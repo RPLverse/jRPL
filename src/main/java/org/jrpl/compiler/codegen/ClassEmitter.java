@@ -16,7 +16,7 @@ import java.util.List;
 import static org.objectweb.asm.Opcodes.*;
 
 /**
- * Generates a bytecode class from a list of jRPL IR instructions.
+ * Generates a bytecode class from a list of IR instructions.
  *
  * <p>The generated class contains:
  * <ul>
@@ -25,16 +25,20 @@ import static org.objectweb.asm.Opcodes.*;
  * </ul>
  */
 public final class ClassEmitter {
+
+    // ASM internal class name (e.g., "org/jrpl/gen/Demo") and flag to generate main(String[])
     private final String internalClassName;
-    private final boolean withMain; // generate main(String[]) if true
+    private final boolean withMain;
 
     /**
-     * Creates a new class emitter targeting the given internal bytecode name.
+     * Creates a new class emitter for the given internal bytecode name.
      *
-     * @param internalClassName the bytecode-internal name, e.g. "org/jrpl/gen/Demo"
+     * @param internalClassName the bytecode-internal name (e.g., "org/jrpl/gen/demo")
      */
     public ClassEmitter(String internalClassName) {
-        this(internalClassName, true); // default: generate main
+
+        // Generate main(String[]) when not specified
+        this(internalClassName, true);
     }
 
     /**
@@ -44,6 +48,8 @@ public final class ClassEmitter {
      * @param withMain whether to generate a public static void main(String[])
      */
     public ClassEmitter(String internalClassName, boolean withMain) {
+
+        // Initialize fields
         this.internalClassName = internalClassName;
         this.withMain = withMain;
     }
@@ -55,10 +61,12 @@ public final class ClassEmitter {
      * @return compiled class bytes
      */
     public byte[] emit(List<Instruction> ir) {
+
+        // Setup ClassWriter and start class definition (Java 17, extends Object)
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         cw.visit(V17, ACC_PUBLIC | ACC_SUPER, internalClassName, null, "java/lang/Object", null);
 
-        // default constructor
+        // Public no-arg constructor equivalent to "public Demo() { super(); }"
         MethodVisitor ctor = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
         ctor.visitCode();
         ctor.visitVarInsn(ALOAD, 0);
@@ -67,19 +75,21 @@ public final class ClassEmitter {
         ctor.visitMaxs(0, 0);
         ctor.visitEnd();
 
-        // run(ExecStack) method
+        // Define public static void run(ExecStack) and emit IR
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC | ACC_STATIC, "run",
                 "(Lorg/jrpl/runtime/ExecStack;)V", null, null);
         mv.visitCode();
-        IrEmitter.emit(ir, mv);      // IR → bytecode
-        mv.visitInsn(RETURN);        // return
-        mv.visitMaxs(0, 0);          // computed by ASM
+        IrEmitter.emit(ir, mv);
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 0);
         mv.visitEnd();
 
+        // Add optional main(String[]) if requested
         if (withMain) {
-            emitMain(cw);            // optional main(String[])
+            emitMain(cw);
         }
 
+        // Finalize class and return bytecode
         cw.visitEnd();
         return cw.toByteArray();
     }
@@ -92,6 +102,8 @@ public final class ClassEmitter {
      * @throws Exception if writing to the file system fails
      */
     public void writeTo(Path out, List<Instruction> ir) throws Exception {
+
+        // Emit bytecode from IR and write .class file to disk
         byte[] bytes = emit(ir);
         Files.createDirectories(out.getParent());
         Files.write(out, bytes);
@@ -117,73 +129,74 @@ public final class ClassEmitter {
      * @param cw the ASM class writer where the method will be emitted
      */
     private void emitMain(ClassWriter cw) {
+
+        // Define public static void main(String[])
         MethodVisitor mv = cw.visitMethod(
                 ACC_PUBLIC | ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
         mv.visitCode();
 
-        // ExecStack s = new ExecStack();
+        // Create new ExecStack s
         mv.visitTypeInsn(NEW, "org/jrpl/runtime/ExecStack");
         mv.visitInsn(DUP);
         mv.visitMethodInsn(INVOKESPECIAL, "org/jrpl/runtime/ExecStack", "<init>", "()V", false);
-        mv.visitVarInsn(ASTORE, 1);                  // local1 = s
+        mv.visitVarInsn(ASTORE, 1);
 
-        // int i = 0;
+        // Initialize int i = 0;
         mv.visitInsn(ICONST_0);
-        mv.visitVarInsn(ISTORE, 2);                  // local2 = i
+        mv.visitVarInsn(ISTORE, 2);
 
+        // Define loop start/end labels and mark loopStart
         Label loopStart = new Label();
         Label loopEnd   = new Label();
         mv.visitLabel(loopStart);
 
         // if (i >= args.length) goto loopEnd;
         mv.visitVarInsn(ILOAD, 2);
-        mv.visitVarInsn(ALOAD, 0);                   // args
+        mv.visitVarInsn(ALOAD, 0);
         mv.visitInsn(ARRAYLENGTH);
         Label body = new Label();
         mv.visitJumpInsn(IF_ICMPLT, body);
         mv.visitJumpInsn(GOTO, loopEnd);
 
-        // body:
+        // Loop body: s.push(Double.parseDouble(args[i]))
         mv.visitLabel(body);
-        // s.push(Double.parseDouble(args[i]));
-        mv.visitVarInsn(ALOAD, 1);                   // s
-        mv.visitVarInsn(ALOAD, 0);                   // args
-        mv.visitVarInsn(ILOAD, 2);                   // i
-        mv.visitInsn(AALOAD);                        // args[i]
+        mv.visitVarInsn(ALOAD, 1);
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitVarInsn(ILOAD, 2);
+        mv.visitInsn(AALOAD);
         mv.visitMethodInsn(INVOKESTATIC, "java/lang/Double",
                 "parseDouble", "(Ljava/lang/String;)D", false);
         mv.visitMethodInsn(INVOKEVIRTUAL, "org/jrpl/runtime/ExecStack",
                 "push", "(D)V", false);
 
-        // i++;
+        // Increment loop counter i
         mv.visitIincInsn(2, 1);
         mv.visitJumpInsn(GOTO, loopStart);
 
         // loopEnd:
         mv.visitLabel(loopEnd);
 
-        // run(s);
+        // Call run(s);
         mv.visitVarInsn(ALOAD, 1);
         mv.visitMethodInsn(INVOKESTATIC, internalClassName,
                 "run", "(Lorg/jrpl/runtime/ExecStack;)V", false);
 
-        // if (s.size() > 0) println(pop()) else println("Stack empty")
+        // Print result: if (s.size() > 0) println(pop()) else println("Stack empty")
         Label hasItems = new Label();
         Label done     = new Label();
-
         mv.visitVarInsn(ALOAD, 1);
         mv.visitMethodInsn(INVOKEVIRTUAL, "org/jrpl/runtime/ExecStack",
                 "size", "()I", false);
         mv.visitJumpInsn(IFGT, hasItems);
 
-        // else: System.out.println("Stack empty");
+        // Else branch: System.out.println("Stack empty")
         mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
         mv.visitLdcInsn("Stack empty");
         mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream",
                 "println", "(Ljava/lang/String;)V", false);
         mv.visitJumpInsn(GOTO, done);
 
-        // then: System.out.println(s.pop());
+        // Then branch: System.out.println(s.pop())
         mv.visitLabel(hasItems);
         mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
         mv.visitVarInsn(ALOAD, 1);
@@ -192,9 +205,10 @@ public final class ClassEmitter {
         mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream",
                 "println", "(D)V", false);
 
+        // Mark end label and finalize main()
         mv.visitLabel(done);
         mv.visitInsn(RETURN);
-        mv.visitMaxs(0, 0); // computed
+        mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
 }

@@ -1,0 +1,8 @@
+<<
+  DUP 0 >
+  IF THEN
+    ^
+  ELSE
+    DROP DROP 1
+  END
+>>

@@ -7,19 +7,24 @@
 package org.jrpl.compiler.ir;
 
 /**
- * Remove the top element of the stack.
+ * Removes the top element of the stack.
  *
- * <p>Equivalent to the RPL instruction {@code DROP}.
+ * <p>Equivalent to the RPL instruction {@code DROP}.</p>
  *
+ * <p>Stack effect:
  * <pre>
- *   stack before: [a]
- *   stack after : []
+ *   before: [a]
+ *   after : []
  * </pre>
  */
 public final class Drop implements Instruction {
 
-    /** Singleton instance (no state). */
+    /**
+     * Singleton instance (stateless).
+     */
     public static final Drop INSTANCE = new Drop();
+
+    // Prevent external instantiation
     private Drop() {
     }
 }

@@ -21,41 +21,49 @@ import java.util.List;
 /**
  * jRPL command-line interface (CLI).
  *
- * <p>Compiles a minimal subset of RPL from {@code .rpl} to a runnable {@code .class}.
- * The generated class exposes:
+ * <p>Compiles a minimal subset of RPL from a {@code .rpl} source to a runnable {@code .class}.
+ * <p>The generated class exposes:
  * <ul>
  *   <li>{@code public static void run(org.jrpl.runtime.ExecStack)}</li>
  *   <li>{@code public static void main(String[])} — accepts numeric args, prints top of stack</li>
  * </ul>
  */
 public final class Main implements Opcodes {
+
+    // Exit codes for abnormal termination
     private static final int EXIT_USAGE_ERROR = 1;
     private static final int EXIT_INVALID_INPUT = 2;
 
-    private Main() { }
+    // Prevent instantiation
+    private Main() {
+    }
 
     /**
      * Program entry point.
      *
      * <p>Usage: {@code jrpl <file.rpl> [--out-dir <dir>] [--class-name <BinaryName>]}.
-     * Compiles the given RPL source into a {@code .class} with
+     * <p>Compiles the given RPL source into a {@code .class} with
      * {@code run(org.jrpl.runtime.ExecStack)} and {@code main(String[])}.
      *
      * @param args command-line arguments
      * @throws Exception if reading the input or writing the class fails
      */
     public static void main(String[] args) throws Exception {
+
+        // Validate CLI arguments
         if (args.length == 0) {
             System.out.println("Usage: jrpl <file.rpl> [--out-dir <dir>] [--class-name <BinaryName>]");
             System.exit(EXIT_USAGE_ERROR);
         }
 
+        // Validate input .rpl file
         Path input = Path.of(args[0]);
         if (!Files.exists(input) || !input.toString().endsWith(".rpl")) {
             System.err.println("Input must be an existing .rpl file: " + input);
             System.exit(EXIT_INVALID_INPUT);
         }
 
+        // Parse optional CLI flags (--out-dir, --class-name)
         Path outDir = Path.of("build/gen-classes");
         String classBinaryName = null;
         for (int i = 1; i < args.length; i++) {
@@ -72,16 +80,16 @@ public final class Main implements Opcodes {
             }
         }
 
-        // Read source and compile
+        // Read source file
         String source = Files.readString(input);
 
-        // 1) lex
+        // Perform lexical analysis
         List<Token> tokens = new Lexer(source).lex();
 
-        // 2) parse → IR
+        // Parse tokens into IR
         List<Instruction> ir = new Parser(tokens).parseProgram();
 
-        // 3) codegen
+        // Generate class name for codegen with compact base-36 timestamp (e.g., "org.jrpl.gen.demo_kf3p9z")
         if (classBinaryName == null) {
             String base = removeExtension(input.getFileName().toString());
             String ts = Long.toString(Instant.now().toEpochMilli(), 36);
@@ -90,17 +98,29 @@ public final class Main implements Opcodes {
         String internal = classBinaryName.replace('.', '/');
         byte[] bytes = new ClassEmitter(internal, true).emit(ir);
 
-        // 4) write
+        // Write generated class file
         Path classFile = outDir.resolve(internal + ".class");
         Files.createDirectories(classFile.getParent());
         Files.write(classFile, bytes);
 
+        // Print output summary
         System.out.println("Generated: " + classFile.toAbsolutePath());
         System.out.println("Class: " + classBinaryName);
     }
 
-    private static void die(String msg, int exitCode) { System.err.println(msg); System.exit(exitCode); }
-    private static String removeExtension(String name) { int i = name.lastIndexOf('.'); return i >= 0 ? name.substring(0, i) : name; }
+    // Print error message and exit with the given code
+    private static void die(String msg, int exitCode) {
+        System.err.println(msg);
+        System.exit(exitCode);
+    }
+
+    // Remove the last file extension (e.g., from "foo.rpl" to "foo")
+    private static String removeExtension(String name) {
+        int i = name.lastIndexOf('.');
+        return i >= 0 ? name.substring(0, i) : name;
+    }
+
+    // Replace non-alphanumeric chars with '_' and prefix '_' if start is invalid
     private static String sanitize(String s) {
         String t = s.replaceAll("[^A-Za-z0-9_]", "_");
         if (!t.isEmpty() && Character.isJavaIdentifierStart(t.charAt(0))) return t;

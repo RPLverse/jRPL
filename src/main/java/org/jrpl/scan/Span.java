@@ -13,13 +13,18 @@ package org.jrpl.scan;
  * <p>Spans are used to annotate tokens and diagnostics,
  * so that error messages can point to the relevant
  * region of code.
-*
- * <h2>Example:</h2>
+ *
+ * <p>Example:
  * <pre>{@code
  * Position start = new Position(0, 1, 1);
  * Position end   = new Position(2, 1, 3);
  * Span span = new Span(start, end);
- * System.out.println(span); // prints "line 1:1 - line 1:3"
+ * System.out.println(span);
+ * }</pre>
+ *
+ * Produces:
+ * <pre>{@code
+ * line 1:1 - line 1:3
  * }</pre>
  *
  * @param start inclusive start position

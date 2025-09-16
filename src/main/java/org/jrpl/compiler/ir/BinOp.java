@@ -7,41 +7,36 @@
 package org.jrpl.compiler.ir;
 
 /**
- * Binary arithmetic operation.
+ * Binary arithmetic operation (addition, subtraction, multiplication, division, exponentiation).
  *
- * <p>Consumes two numbers from the stack and pushes the result.
+ * <p>Consumes two numbers from the stack and pushes the result.</p>
  *
- * <h2>Supported operations:</h2>
- * <ul>
- *   <li>{@link Kind#ADD} – addition</li>
- *   <li>{@link Kind#SUB} – subtraction</li>
- *   <li>{@link Kind#MUL} – multiplication</li>
- *   <li>{@link Kind#DIV} – division</li>
- *   <li>{@link Kind#POW} – exponentiation</li>
- * </ul>
- *
- * <p>Example RPL: {@code +}</p>
+ * <p>Example RPL:
+ * <pre>{@code
+ *  2 3 +
+ * }</pre>
  */
 public final class BinOp implements Instruction {
 
     /**
-     *  Operation kind.
+     * Supported kinds of binary operations.
      */
     public enum Kind {
-       /** Addition: a + b. */ ADD,
-       /** Subtraction: a - b. */ SUB,
-       /** Multiplication: a * b. */ MUL,
-       /** Division: a / b. */ DIV,
-       /** Exponentiation: a ^ b. */ POW
+        /** Addition: {@code a + b} */ ADD,
+        /** Subtraction: {@code a - b} */ SUB,
+        /** Multiplication: {@code a * b} */ MUL,
+        /** Division: {@code a / b} */ DIV,
+        /** Exponentiation: {@code a ^ b} */ POW
     }
 
     /**
-     * Selected operation kind.
+     * The selected operation kind.
      */
     public final Kind kind;
 
     /**
-     * Creates a binary operation IR node.
+     * Creates a new binary operation IR node.
+     *
      * @param kind the operation kind
      */
     public BinOp(Kind kind) {

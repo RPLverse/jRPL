@@ -41,21 +41,25 @@ public final class Lexer {
     }
 
     /**
-     * Lexes the entire input and returns the list of tokens,
-     * always ending with an {@code EOF} token.
+     * Lexes the entire input and returns the list of tokens.
+     *
+     * <p>The returned list always ends with an {@code EOF} token.</p>
      *
      * @return the complete token list
      */
     public List<Token> lex() {
+
+        // Scan input until EOF, emitting tokens
         List<Token> out = new ArrayList<>();
         while (!src.eof()) {
             skipWhitespaceAndComments();
             if (src.eof()) break;
 
+            // Mark token start and read current character
             Position start = src.position();
             char c = src.cursor();
 
-            // delimiters and multi-char operators that start with '<' or '>'
+            // Delimiters and multi-char operators starting with '<'
             if (c == '<') {
                 src.next(); // consume first '<'
                 if (src.match('<')) {
@@ -67,6 +71,8 @@ public final class Lexer {
                 }
                 continue;
             }
+
+            // Delimiters and multi-char operators starting with '>'
             if (c == '>') {
                 src.next(); // consume first '>'
                 if (src.match('>')) {
@@ -79,7 +85,7 @@ public final class Lexer {
                 continue;
             }
 
-            // equality / inequality
+            // Equality
             if (c == '=') {
                 src.next();
                 if (src.match('=')) {
@@ -89,6 +95,8 @@ public final class Lexer {
                 }
                 continue;
             }
+
+            // Inequality
             if (c == '!') {
                 src.next();
                 if (src.match('=')) {
@@ -99,33 +107,35 @@ public final class Lexer {
                 continue;
             }
 
-            // single-char operators
+            // Single-char operators
             if (c == '+') { src.next(); out.add(Token.of(TokenType.PLUS, "+", span(start))); continue; }
             if (c == '-') { src.next(); out.add(Token.of(TokenType.MINUS, "-", span(start))); continue; }
             if (c == '*') { src.next(); out.add(Token.of(TokenType.STAR,  "*", span(start))); continue; }
             if (c == '/') { src.next(); out.add(Token.of(TokenType.SLASH, "/", span(start))); continue; }
             if (c == '^') { src.next(); out.add(Token.of(TokenType.CARET, "^", span(start))); continue; }
 
-            // numbers
+            // Numbers
             if (Character.isDigit(c)) {
                 out.add(readNumber(start));
                 continue;
             }
 
-            // identifiers (keywords)
+            // Identifiers (keywords)
             if (Character.isLetter(c)) {
                 out.add(readKeyword(start));
                 continue;
             }
 
+            // Unexpected character
             throw error("Unexpected character: '" + c + "'", start);
         }
 
+        // Always append EOF
         out.add(Token.of(TokenType.EOF, "", span(src.position())));
         return out;
     }
 
-    /** Skip whitespace and ';' line comments. */
+    // Skip whitespace and ';' line comments
     private void skipWhitespaceAndComments() {
         while (!src.eof()) {
             char c = src.cursor();
@@ -138,7 +148,7 @@ public final class Lexer {
         }
     }
 
-    /** Read a NUMBER token (integer or decimal). */
+    // Read a NUMBER token (integer or decimal)
     private Token readNumber(Position start) {
         boolean sawDot = false;
         while (!src.eof()) {
@@ -157,7 +167,7 @@ public final class Lexer {
         return Token.number(lexeme, value, new Span(start, src.position()));
     }
 
-    /** Read an identifier and classify it as a keyword token. */
+    // Read an identifier and classify it as a keyword
     private Token readKeyword(Position start) {
         while (!src.eof()) {
             char ch = src.cursor();
@@ -180,11 +190,12 @@ public final class Lexer {
         return Token.of(tt, word, new Span(start, src.position()));
     }
 
-    /** Create a span from a start position to the current cursor. */
+    // Create a span from a start position to the current cursor
     private Span span(Position start) {
         return new Span(start, src.position());
     }
 
+    // Build an error with message and position
     private IllegalArgumentException error(String msg, Position at) {
         return new IllegalArgumentException(msg + " at " + at);
     }

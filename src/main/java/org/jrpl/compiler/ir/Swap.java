@@ -7,19 +7,24 @@
 package org.jrpl.compiler.ir;
 
 /**
- * Swap the top two elements of the stack.
+ * Swaps the top two elements of the stack.
  *
- * <p>Equivalent to the RPL instruction {@code SWAP}.
+ * <p>Equivalent to the RPL instruction {@code SWAP}.</p>
  *
+ * <p>Stack effect:
  * <pre>
- *   stack before: [a, b]
- *   stack after : [b, a]
+ *   before: [a, b]
+ *   after : [b, a]
  * </pre>
  */
 public final class Swap implements Instruction {
 
-    /** Singleton instance (no state). */
+    /**
+     * Singleton instance (stateless).
+     */
     public static final Swap INSTANCE = new Swap();
+
+    // Prevent external instantiation
     private Swap() {
     }
 }

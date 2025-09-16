@@ -7,20 +7,22 @@
 package org.jrpl.compiler.ir;
 
 /**
- * Pushes a constant double value onto the runtime stack.
+ * Pushes a constant {@code double} onto the runtime stack.
  *
  * <p>Example RPL:
- * <pre>
- *   42    ; PushConst(42.0)
- * </pre>
+ * <pre>{@code
+ *  66
+ * }</pre>
  */
 public final class PushConst implements Instruction {
 
-    /** The constant value to be pushed. */
+    /**
+     * Constant value to be pushed.
+     */
     public final double value;
 
     /**
-     * Creates a constant-push IR node.
+     * Creates a new constant-push IR node.
      *
      * @param value constant numeric value to push
      */

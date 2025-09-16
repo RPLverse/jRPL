@@ -7,19 +7,24 @@
 package org.jrpl.compiler.ir;
 
 /**
- * Duplicate the top element of the stack.
+ * Duplicates the top element of the stack.
  *
- * <p>Equivalent to the RPL instruction {@code DUP}.
+ * <p>Equivalent to the RPL instruction {@code DUP}.</p>
  *
+ * <p>Stack effect:
  * <pre>
- *   stack before: [a]
- *   stack after : [a, a]
+ *   before: [a]
+ *   after : [a, a]
  * </pre>
  */
 public final class Dup implements Instruction {
 
-    /** Singleton instance (no state). */
+    /**
+     * Singleton instance (stateless).
+     */
     public static final Dup INSTANCE = new Dup();
+
+    // Prevent external instantiation
     private Dup() {
     }
 }

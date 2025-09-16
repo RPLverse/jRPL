@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2025 Massimo Costantini
- * Licensed under the Apache License, Version 2.0
- * See the LICENSE file in the project root for full license information
+ * Copyright (c) 2025 Massimo Costantini.
+ * Licensed under the Apache License, Version 2.0.
+ * See the LICENSE file in the project root for full license information.
  */
 
 package org.jrpl.scan;
@@ -13,7 +13,7 @@ package org.jrpl.scan;
  * while keeping track of the current position.
  * It also supports simple matching and slicing substrings.
  *
- * <h2>Example:</h2>
+ * <p>Example:
  * <pre>{@code
  * Source source = new Source("12 + 34");
  *
@@ -23,8 +23,14 @@ package org.jrpl.scan;
  * }
  * Span span = new Span(start, source.position());
  *
- * System.out.println(source.slice(start)); // "12"
- * System.out.println(span);                // "line 1:1 - line 1:3"
+ * System.out.println(source.slice(start));
+ * System.out.println(span);
+ * }</pre>
+ *
+ * Produces:
+ * <pre>{@code
+ * 12
+ * line 1:1 - line 1:3
  * }</pre>
  */
 public final class Source {
@@ -45,7 +51,9 @@ public final class Source {
    *
    * @return {@code true} if all characters have been consumed
    */
-  public boolean eof() { return i >= source.length(); }
+  public boolean eof() {
+      return i >= source.length();
+  }
 
   /**
    * Returns the current character without consuming it.
@@ -68,7 +76,11 @@ public final class Source {
   public char next() {
     char c = cursor();
     i++;
-    if (c == '\n') { line++; column = 1; } else { column++; }
+    if (c == '\n') {
+        line++; column = 1;
+    } else {
+        column++;
+      }
     return c;
   }
 
