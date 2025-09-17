@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025 Massimo Costantini.
  * Licensed under the Apache License, Version 2.0.
  * See the LICENSE file in the project root for full license information.
@@ -27,9 +27,4 @@ package org.jrpl.scan;
  * @param column one-based column number
  */
 public record Position(int index, int line, int column) {
-
-    /**
-     * Initial position (offset 0, line 1, column 1)
-     */
-    public static final Position ZERO = new Position(0, 1, 1);
 }

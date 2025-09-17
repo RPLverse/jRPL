@@ -31,17 +31,6 @@ public final class ClassEmitter {
     private final boolean withMain;
 
     /**
-     * Creates a new class emitter for the given internal bytecode name.
-     *
-     * @param internalClassName the bytecode-internal name (e.g., "org/jrpl/gen/demo")
-     */
-    public ClassEmitter(String internalClassName) {
-
-        // Generate main(String[]) when not specified
-        this(internalClassName, true);
-    }
-
-    /**
      * Creates a new class emitter with an option to generate a {@code main} entry point.
      *
      * @param internalClassName internal bytecode name (e.g., {@code "org/jrpl/gen/demo"})
