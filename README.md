@@ -1,7 +1,7 @@
 # jRPL
 An RPL to bytecode compiler.
 
-*jRPL* compiles a small subset of RPL (Reverse Polish Lisp, the language used on classic HP programmable calculators) to Java *bytecode*, built using [ASM](https://asm.ow2.io/).
+*jRPL* compiles a small subset of RPL (Reverse Polish Lisp, the language used on classic HP programmable calculators) to Java *bytecode*, built using [ASM](https://asm.ow2.io/) framework.
 
 The project was created as an exercise for the *Software Development Methods* exam (MSc in Computer Engineering) and keeps a simple, extensible architecture.
 
@@ -50,7 +50,7 @@ Without passing --class-name, an auto name like org.jrpl.gen.demo_ab12cd is used
 - Arithmetic: + - * / ^
 - Comparisons: < > <= >= == !=
   (booleans represented as 0.0 / 1.0)
-- Stack operations: DUP, DROP, SWAP
+- Stack operations: DUP DROP SWAP
 - Control flow: IF THEN … ELSE … END
 
 ### Examples (under examples/)
@@ -67,7 +67,6 @@ Without passing --class-name, an auto name like org.jrpl.gen.demo_ab12cd is used
 >>
 
 ```
-
 ```rpl
 ; demo2.rpl
 ; Given a, b from the command line, computes sqrt(a ^ 2 + b ^ 2)
