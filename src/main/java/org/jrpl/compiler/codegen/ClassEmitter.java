@@ -98,7 +98,7 @@ public final class ClassEmitter {
         Files.write(out, bytes);
     }
 
-    // Emits the public static void main(String[] args) method.
+    // Emits the public static void main(String[] args) method
     //
     // Equivalent Java generated:
     // ExecStack s = new ExecStack();

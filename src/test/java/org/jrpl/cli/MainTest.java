@@ -27,8 +27,8 @@ class MainTest {
     // Create a temporary directory for test input and output
     Path tmp = Files.createTempDirectory("jrpl-test-");
 
-    // Write a small RPL program (2 3 +) into hello.rpl
-    Path in = tmp.resolve("hello.rpl");
+    // Write a small RPL program (2 3 +) into add.rpl
+    Path in = tmp.resolve("add.rpl");
     Files.writeString(in, "<< 2 3 + >>");
 
     // Output directory for the generated class

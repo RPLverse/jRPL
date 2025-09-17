@@ -34,7 +34,7 @@ public final class Main {
     /**
      * Program entry point.
      *
-     * <p>Usage: {@code jrpl <file.rpl> [--out-dir <dir>] [--class-name <BinaryName>] [--no-main]}</p>
+     * <p>Usage: {@code jrpl <file.rpl> [--out-dir <dir>] [--class-name <BinaryName>] [--no-main]}
      *
      * @param args command-line arguments
      * @throws Exception if reading the input or writing the class fails
@@ -60,7 +60,7 @@ public final class Main {
             String classBinaryName = opt.classBinaryName != null ? opt.classBinaryName : autoName(input);
             String internal = classBinaryName.replace('.', '/');
 
-            // Run the compilation pipeline (lex, parse, bytecode) via static facade
+            // Run the compilation pipeline (lex, parse, bytecode)
             byte[] bytes = Compiler.compile(source, internal, opt.withMain);
 
             // Write generated .class file to disk
@@ -82,7 +82,7 @@ public final class Main {
         }
     }
 
-    // Remove the last file extension (e.g., from "foo.rpl" to "foo")
+    // Remove file extension (e.g., from "demo.rpl" to "demo")
     private static String removeExtension(String name) {
         int i = name.lastIndexOf('.');
         return i >= 0 ? name.substring(0, i) : name;

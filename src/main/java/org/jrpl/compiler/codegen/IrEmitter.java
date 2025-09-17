@@ -47,7 +47,7 @@ final class IrEmitter {
         mv.visitMethodInsn(INVOKEVIRTUAL, "org/jrpl/runtime/ExecStack", "push", "(D)V", false);
     }
 
-    // Call void method on ExecStack (e.g., dup, drop, swap)
+    // Call void method on ExecStack (e.g., drop, dup, swap)
     private static void emitCall(MethodVisitor mv, String name, String desc) {
         mv.visitVarInsn(ALOAD, 0);
         mv.visitMethodInsn(INVOKEVIRTUAL, "org/jrpl/runtime/ExecStack", name, desc, false);
