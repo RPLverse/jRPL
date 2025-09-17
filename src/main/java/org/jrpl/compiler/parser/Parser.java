@@ -59,6 +59,7 @@ public final class Parser {
         // Track whether the program is delimited with '<<' ... '>>'
         boolean hasLShift = match(LSHIFT);
 
+        // Accumulates the parsed instructions
         List<Instruction> out = new ArrayList<>();
 
         // Parse instructions until '>>' or EOF
@@ -68,9 +69,12 @@ public final class Parser {
 
         // Enforce delimiter pairing rules
         if (hasLShift) {
+
             // If program started with '<<', require a closing '>>'
             expect(RSHIFT, "'>>'");
+
         } else if (check(RSHIFT)) {
+
             // Found '>>' without a matching '<<'
             throw error("Unexpected '>>' without matching '<<'");
         }
@@ -112,7 +116,7 @@ public final class Parser {
             case IF     -> { return parseIf(); }
 
             // Unexpected token
-            default -> throw error("Unexpected token: " + t.lexeme());
+            default -> throw error("Unexpected token");
         }
     }
 
@@ -169,12 +173,18 @@ public final class Parser {
 
     // Expect specific token type or throw error
     private void expect(TokenType t, String ctx) {
-        if (!check(t)) throw error("Expected " + ctx + " but found: " + peek().lexeme());
+        if (!check(t)) throw error("Expected " + ctx);
         advance();
     }
 
-    // Create parser error
+    // Create parser error with current token and span
     private IllegalArgumentException error(String msg) {
-        return new IllegalArgumentException(msg);
+        Token t = peek();
+        String near = t.lexeme();
+        String where = t.span().toString();
+
+        // Example: "Parse error: Expected 'THEN' near token 'ELSE' at line 1:10 - line 1:14"
+        return new IllegalArgumentException("Parse error: " + msg
+                + " near token '" + near + "' at " + where);
     }
 }

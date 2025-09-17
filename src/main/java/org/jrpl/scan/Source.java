@@ -34,6 +34,8 @@ package org.jrpl.scan;
  * }</pre>
  */
 public final class Source {
+
+  // Underlying source text and current cursor (offset, line, column)
   private final String source;
   private int i = 0, line = 1, column = 1;
 

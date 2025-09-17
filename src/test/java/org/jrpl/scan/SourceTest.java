@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025 Massimo Costantini.
  * Licensed under the Apache License, Version 2.0.
  * See the LICENSE file in the project root for full license information.
@@ -6,18 +6,20 @@
 
 package org.jrpl.scan;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SourceTest {
 
   @Test
+  @DisplayName("Tracks line and column positions while scanning")
   void tracksLinesAndColumns() {
 
     // Initialize source with two lines: "ab" and "c"
     Source source = new Source("ab\nc");
 
-    // At the beginning, we should not be at EOF
+    // At the beginning, it should not be at EOF
     assertFalse(source.eof());
 
     // Cursor starts at 'a'
@@ -42,6 +44,7 @@ public class SourceTest {
   }
 
   @Test
+  @DisplayName("Lexer.match() recognizes expected tokens")
   void matchWorks() {
 
     // Initialize source with ">>="
@@ -58,6 +61,7 @@ public class SourceTest {
   }
 
   @Test
+  @DisplayName("Source.slice() returns the expected substring")
   void sliceReturnsSubstring() {
 
     // Initialize source with "hello"

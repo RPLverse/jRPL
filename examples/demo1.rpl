@@ -1,0 +1,9 @@
+; Given a, b from the command line, if b > 0 then computes a ^ b, else pushes 1
+<<
+  DUP 0 >
+  IF THEN
+    ^
+  ELSE
+    DROP DROP 1
+  END
+>>

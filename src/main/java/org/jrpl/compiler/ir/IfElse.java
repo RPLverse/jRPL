@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025 Massimo Costantini.
  * Licensed under the Apache License, Version 2.0.
  * See the LICENSE file in the project root for full license information.
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Conditional execution based on a boolean (1.0 = true, 0.0 = false) popped from the stack.
  *
- * <p>Executes {@link #thenBranch} when true; executes {@link #elseBranch} when false (if present).</p>
+ * <p>Executes {@link #thenBranch} when true; executes {@link #elseBranch} when false (if present).
  *
  * <p>Example RPL:
  * <pre>{@code

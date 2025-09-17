@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025 Massimo Costantini.
  * Licensed under the Apache License, Version 2.0.
  * See the LICENSE file in the project root for full license information.
@@ -9,7 +9,7 @@ package org.jrpl.compiler.ir;
 /**
  * Swaps the top two elements of the stack.
  *
- * <p>Equivalent to the RPL instruction {@code SWAP}.</p>
+ * <p>Equivalent to the RPL instruction {@code SWAP}.
  *
  * <p>Stack effect:
  * <pre>
@@ -24,7 +24,7 @@ public final class Swap implements Instruction {
      */
     public static final Swap INSTANCE = new Swap();
 
-    // Prevent external instantiation
+    // Prevent instantiation
     private Swap() {
     }
 }

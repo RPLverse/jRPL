@@ -27,10 +27,6 @@ import java.time.Instant;
  */
 public final class Main {
 
-    // Exit codes for abnormal termination
-    private static final int EXIT_USAGE_ERROR = 1;
-    private static final int EXIT_INVALID_INPUT = 2;
-
     // Prevent instantiation
     private Main() {
     }
@@ -45,35 +41,45 @@ public final class Main {
      */
     public static void main(String[] args) throws Exception {
 
-        // Parse CLI options (validates flags and provides defaults)
-        Options opt = Options.parse(args);
+        // Run compilation pipeline and handle usage errors
+        try {
 
-        // Validate input .rpl file
-        Path input = opt.inputFile;
-        if (!Files.exists(input) || !input.toString().endsWith(".rpl")) {
-            System.err.println("Input must be an existing .rpl file: " + input);
-            System.exit(EXIT_INVALID_INPUT);
+            // Parse CLI options (validates flags and provides defaults)
+            Options opt = Options.parse(args);
+
+            // Validate input .rpl file
+            Path input = opt.inputFile;
+            if (!Files.exists(input) || !input.toString().toLowerCase().endsWith(".rpl")) {
+                throw new IllegalArgumentException("Input must be an existing .rpl file: " + input);
+            }
+
+            // Read source file
+            String source = Files.readString(input);
+
+            // Generate class binary name for codegen with compact base-36 timestamp (e.g., "org.jrpl.gen.demo_kf3p9z")
+            String classBinaryName = opt.classBinaryName != null ? opt.classBinaryName : autoName(input);
+            String internal = classBinaryName.replace('.', '/');
+
+            // Run the compilation pipeline (lex, parse, bytecode) via static facade
+            byte[] bytes = Compiler.compile(source, internal, opt.withMain);
+
+            // Write generated .class file to disk
+            Path classFile = opt.outDir.resolve(internal + ".class");
+            Path parent = classFile.getParent();
+            if (parent != null) Files.createDirectories(parent);
+            Files.write(classFile, bytes);
+
+            // Print output summary
+            System.out.println("Generated: " + classFile.toAbsolutePath());
+            System.out.println("Class: " + classBinaryName);
+
+        } catch (IllegalArgumentException e) {
+
+            // Print error message and usage, then terminate with usage error code
+            System.err.println("Error: " + e.getMessage());
+            System.err.println("Usage: jrpl <file.rpl> [--out-dir <dir>] [--class-name <BinaryName>] [--no-main]");
+            return;
         }
-
-        // Read source file
-        String source = Files.readString(input);
-
-        // Generate class binary name for codegen with compact base-36 timestamp (e.g., "org.jrpl.gen.demo_kf3p9z")
-        String classBinaryName = opt.classBinaryName != null ? opt.classBinaryName : autoName(input);
-        String internal = classBinaryName.replace('.', '/');
-
-        // Run the compilation pipeline (lex, parse, bytecode) via static facade
-        byte[] bytes = Compiler.compile(source, internal, opt.withMain);
-
-        // Write generated .class file to disk
-        Path classFile = opt.outDir.resolve(internal + ".class");
-        Path parent = classFile.getParent();
-        if (parent != null) Files.createDirectories(parent);
-        Files.write(classFile, bytes);
-
-        // Print output summary
-        System.out.println("Generated: " + classFile.toAbsolutePath());
-        System.out.println("Class: " + classBinaryName);
     }
 
     // Remove the last file extension (e.g., from "foo.rpl" to "foo")

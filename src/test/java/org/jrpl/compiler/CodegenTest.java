@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025 Massimo Costantini.
  * Licensed under the Apache License, Version 2.0.
  * See the LICENSE file in the project root for full license information.
@@ -9,6 +9,7 @@ package org.jrpl.compiler;
 import org.jrpl.compiler.codegen.ClassEmitter;
 import org.jrpl.compiler.ir.*;
 import org.jrpl.runtime.ExecStack;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CodegenTest {
 
   @Test
+  @DisplayName("Emits and runs addition (+)")
   void emitsAndRunsAdd() throws Exception {
 
     // Build an intermediate representation (IR):

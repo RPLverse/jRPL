@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025 Massimo Costantini.
  * Licensed under the Apache License, Version 2.0.
  * See the LICENSE file in the project root for full license information.
@@ -43,7 +43,7 @@ public final class Lexer {
     /**
      * Lexes the entire input and returns the list of tokens.
      *
-     * <p>The returned list always ends with an {@code EOF} token.</p>
+     * <p>The returned list always ends with an {@code EOF} token.
      *
      * @return the complete token list
      */

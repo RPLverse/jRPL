@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025 Massimo Costantini.
  * Licensed under the Apache License, Version 2.0.
  * See the LICENSE file in the project root for full license information.
@@ -26,7 +26,7 @@ import static org.objectweb.asm.Opcodes.*;
  */
 public final class ClassEmitter {
 
-    // ASM internal class name (e.g., "org/jrpl/gen/Demo") and flag to generate main(String[])
+    // ASM internal class name (e.g., "org/jrpl/gen/demo") and flag to generate main(String[])
     private final String internalClassName;
     private final boolean withMain;
 
@@ -44,7 +44,7 @@ public final class ClassEmitter {
     /**
      * Creates a new class emitter with an option to generate a {@code main} entry point.
      *
-     * @param internalClassName internal bytecode name (e.g., {@code "org/jrpl/gen/Demo"})
+     * @param internalClassName internal bytecode name (e.g., {@code "org/jrpl/gen/demo"})
      * @param withMain whether to generate a public static void main(String[])
      */
     public ClassEmitter(String internalClassName, boolean withMain) {
@@ -109,25 +109,21 @@ public final class ClassEmitter {
         Files.write(out, bytes);
     }
 
-    /**
-     * Emits the {@code public static void main(String[] args)} method.
-     *
-     * <p>Equivalent Java code generated:
-     * <pre>{@code
-     * ExecStack s = new ExecStack();
-     * for (int i = 0; i < args.length; i++) {
-     *     s.push(Double.parseDouble(args[i]));
-     * }
-     * run(s);
-     * if (s.size() > 0) {
-     *     System.out.println(s.pop());
-     * } else {
-     *     System.out.println("Stack empty");
-     * }
-     * }</pre>
-     *
-     * @param cw the ASM class writer where the method will be emitted
-     */
+    // Emits the public static void main(String[] args) method.
+    //
+    // Equivalent Java generated:
+    // ExecStack s = new ExecStack();
+    // for (int i = 0; i < args.length; i++) {
+    //     s.push(Double.parseDouble(args[i]));
+    // }
+    // run(s);
+    // if (s.size() > 0) {
+    //     System.out.println(s.pop());
+    // } else {
+    //     System.out.println("Stack empty");
+    // }
+    //
+    // cw: the ASM ClassWriter where the method will be emitted
     private void emitMain(ClassWriter cw) {
 
         // Define public static void main(String[])
