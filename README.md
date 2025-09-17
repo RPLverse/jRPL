@@ -1,7 +1,7 @@
 # jRPL
 An RPL to bytecode compiler.
 
-*jRPL* compiles a small subset of RPL (Reverse Polish Lisp, the language used on classic HP programmable calculators) to Java *bytecode*, built using [ASM](https://asm.ow2.io/) framework.
+*jRPL* compiles a small subset of RPL (Reverse Polish Lisp, the language used on classic HP programmable calculators) to Java bytecode, built using [ASM](https://asm.ow2.io/) framework.
 
 The project was created as an exercise for the *Software Development Methods* exam (MSc in Computer Engineering) and keeps a simple, extensible architecture.
 
@@ -24,16 +24,15 @@ The generated class depends on the runtime (org.jrpl.runtime.ExecStack), so both
 
 Linux
 ```bash
-java -cp build/gen-classes:build/classes/java/main org.jrpl.gen.Demo 2 4
+java -cp build/gen-classes:build/classes/java/main org.jrpl.gen.Demo
 
 ```
 
 Windows
 ```bash
-java -cp build\gen-classes;build\classes\java\main org.jrpl.gen.Demo 2 4
+java -cp build\gen-classes;build\classes\java\main org.jrpl.gen.Demo
 
 ```
-
 
 ### What the compiler generates
 The resulting class exposes:
@@ -46,11 +45,11 @@ main(String[]) parses CLI arguments as double, pushes them on the stack, runs th
 Without passing --class-name, an auto name like org.jrpl.gen.demo_ab12cd is used (with a base-36 timestamp), passing --class-name org.jrpl.gen.Demo, that class will be generated.
 
 ### Supported syntax
-- Numbers: non-negative literals only (e.g., 3, 2.5), but negative values are produced via operations (e.g., 0 5 - becomes -5)
+- Numbers: positive literals only (e.g., 3, 2.5), but negative values are produced via operations (e.g., 0 5 - becomes -5)
 - Arithmetic: + - * / ^
 - Comparisons: < > <= >= == !=
   (booleans represented as 0.0 / 1.0)
-- Stack operations: DUP DROP SWAP
+- Stack operations: DROP DUP SWAP
 - Control flow: IF THEN … ELSE … END
 
 ### Examples (under examples/)
