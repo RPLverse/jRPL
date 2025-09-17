@@ -20,7 +20,7 @@ Pipeline to compile examples/demo.rpl into a runnable class:
 ```
 
 ### Run
-The generated class depends on the runtime (org.jrpl.runtime.ExecStack), so both the generated class and the project’s runtime class on the classpath have to be included
+The generated class depends on the runtime (org.jrpl.runtime.ExecStack), so both the generated class and the project’s runtime class have to be included on the classpath
 
 Linux
 ```bash
@@ -42,13 +42,12 @@ The resulting class exposes:
 
 main(String[]) parses CLI arguments as double, pushes them on the stack, runs the program and prints the top of the stack.
 
-Without passing --class-name, an auto name like "org.jrpl.gen.demo_ab12cd" is used (with a base-36 timestamp), passing --class-name org.jrpl.gen.Demo, that class will be generated.
+Without passing --class-name, an auto name like "org.jrpl.gen.demo_ab12cd" is used (with a base-36 timestamp), passing --class-name org.jrpl.gen.Demo, that class name will be generated.
 
 ### Supported syntax
-- Numbers: positive literals only (e.g., 3, 2.5), but negative values are produced via operations (e.g., 0 5 - becomes -5)
+- Positive numbers: negative values are produced only via operations (e.g., 0 5 - becomes -5)
 - Arithmetic: + - * / ^
-- Comparisons: < > <= >= == !=
-  (booleans represented as 0.0 / 1.0)
+- Comparisons: < > <= >= == != (booleans are represented as 0.0 / 1.0)
 - Stack operations: DROP DUP SWAP
 - Control flow: IF THEN … ELSE … END
 
