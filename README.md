@@ -1,7 +1,7 @@
 # jRPL
 An RPL to bytecode compiler.
 
-*jRPL* compiles a small subset of RPL (Reverse Polish Lisp, the language used on classic HP programmable calculators) to Java bytecode, built using [ASM](https://asm.ow2.io/) framework.
+*jRPL* compiles a small subset of RPL (Reverse Polish Lisp, the language used on classic HP programmable calculators) to Java bytecode, built using the [ASM](https://asm.ow2.io/) framework.
 
 The project was created as an exercise for the *Software Development Methods* exam (MSc in Computer Engineering) and keeps a simple, extensible architecture.
 
@@ -20,7 +20,7 @@ Pipeline to compile examples/demo.rpl into a runnable class:
 ```
 
 ### Run
-The generated class depends on the runtime (org.jrpl.runtime.ExecStack), so both the generated classes and the project’s runtime classes on the classpath have to be included
+The generated class depends on the runtime (org.jrpl.runtime.ExecStack), so both the generated class and the project’s runtime class on the classpath have to be included
 
 Linux
 ```bash
@@ -42,7 +42,7 @@ The resulting class exposes:
 
 main(String[]) parses CLI arguments as double, pushes them on the stack, runs the program and prints the top of the stack.
 
-Without passing --class-name, an auto name like org.jrpl.gen.demo_ab12cd is used (with a base-36 timestamp), passing --class-name org.jrpl.gen.Demo, that class will be generated.
+Without passing --class-name, an auto name like "org.jrpl.gen.demo_ab12cd" is used (with a base-36 timestamp), passing --class-name org.jrpl.gen.Demo, that class will be generated.
 
 ### Supported syntax
 - Numbers: positive literals only (e.g., 3, 2.5), but negative values are produced via operations (e.g., 0 5 - becomes -5)
