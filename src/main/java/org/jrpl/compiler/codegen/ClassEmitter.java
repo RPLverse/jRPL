@@ -51,7 +51,7 @@ public final class ClassEmitter {
      */
     public byte[] emit(List<Instruction> ir) {
 
-        // Setup ClassWriter and start class definition (Java 17, extends Object)
+        // Setup ClassWriter and start class definition
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         cw.visit(V17, ACC_PUBLIC | ACC_SUPER, internalClassName, null, "java/lang/Object", null);
 
@@ -68,7 +68,12 @@ public final class ClassEmitter {
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC | ACC_STATIC, "run",
                 "(Lorg/jrpl/runtime/ExecStack;)V", null, null);
         mv.visitCode();
+
+        // Translate the intermediate representation (IR) into bytecode
+        // Each PushConst / BinOp instruction becomes corresponding ExecStack calls
         IrEmitter.emit(ir, mv);
+
+        // Finalize the method
         mv.visitInsn(RETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();

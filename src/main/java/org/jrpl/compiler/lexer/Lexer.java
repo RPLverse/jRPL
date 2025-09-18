@@ -19,7 +19,7 @@ import java.util.List;
  * <p>Recognizes:
  * <ul>
  *   <li>Delimiters: {@code <<} {@code >>}</li>
- *   <li>Keywords: {@code IF}, {@code THEN}, {@code ELSE}, {@code END}, {@code DUP}, {@code DROP}, {@code SWAP}</li>
+ *   <li>Keywords: {@code IF}, {@code THEN}, {@code ELSE}, {@code END}, {@code DROP}, {@code DUP}, {@code SWAP}</li>
  *   <li>Operators:
  *     {@code +}, {@code -}, {@code *}, {@code /}, {@code ^},
  *     {@literal >}, {@literal <}, {@code >=}, {@code <=}, {@code ==}, {@code !=}
@@ -61,7 +61,7 @@ public final class Lexer {
 
             // Delimiters and multi-char operators starting with '<'
             if (c == '<') {
-                src.next(); // consume first '<'
+                src.next();
                 if (src.match('<')) {
                     out.add(Token.of(TokenType.LSHIFT, "<<", span(start)));
                 } else if (src.match('=')) {
@@ -74,7 +74,7 @@ public final class Lexer {
 
             // Delimiters and multi-char operators starting with '>'
             if (c == '>') {
-                src.next(); // consume first '>'
+                src.next();
                 if (src.match('>')) {
                     out.add(Token.of(TokenType.RSHIFT, ">>", span(start)));
                 } else if (src.match('=')) {
@@ -140,8 +140,9 @@ public final class Lexer {
         while (!src.eof()) {
             char c = src.cursor();
             if (Character.isWhitespace(c)) { src.next(); continue; }
-            if (c == ';') { // comment until newline
-                while (!src.eof() && src.next() != '\n') { /* skip */ }
+            if (c == ';') { 
+                while (!src.eof() && src.next() != '\n') {
+                }
                 continue;
             }
             break;
@@ -182,8 +183,8 @@ public final class Lexer {
             case "THEN" -> TokenType.THEN;
             case "ELSE" -> TokenType.ELSE;
             case "END"  -> TokenType.END;
-            case "DUP"  -> TokenType.DUP;
             case "DROP" -> TokenType.DROP;
+            case "DUP"  -> TokenType.DUP;
             case "SWAP" -> TokenType.SWAP;
             default -> throw error("Unknown identifier: " + word, start);
         };

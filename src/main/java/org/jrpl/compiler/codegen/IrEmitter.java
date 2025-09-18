@@ -30,8 +30,8 @@ final class IrEmitter {
         // Dispatch each IR instruction to the corresponding emit method
         for (Instruction i : ir) {
             if (i instanceof PushConst pc) emitPush(pc, mv);
-            else if (i instanceof Dup) emitCall(mv, "dup", "()V");
             else if (i instanceof Drop) emitCall(mv, "drop", "()V");
+            else if (i instanceof Dup) emitCall(mv, "dup", "()V");
             else if (i instanceof Swap) emitCall(mv, "swap", "()V");
             else if (i instanceof BinOp b) emitBin(b, mv);
             else if (i instanceof CmpOp c) emitCmp(c, mv);
@@ -47,7 +47,7 @@ final class IrEmitter {
         mv.visitMethodInsn(INVOKEVIRTUAL, "org/jrpl/runtime/ExecStack", "push", "(D)V", false);
     }
 
-    // Call void method on ExecStack (e.g., drop, dup, swap)
+    // Call void method on ExecStack (e.g., dup, drop, swap)
     private static void emitCall(MethodVisitor mv, String name, String desc) {
         mv.visitVarInsn(ALOAD, 0);
         mv.visitMethodInsn(INVOKEVIRTUAL, "org/jrpl/runtime/ExecStack", name, desc, false);

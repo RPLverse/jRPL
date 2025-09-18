@@ -44,14 +44,14 @@ public enum TokenType {
     END,
 
     /** 
-     * Keyword: {@code DUP} 
-     */ 
-    DUP,
-
-    /** 
      * Keyword: {@code DROP} 
      */ 
     DROP,
+
+    /** 
+     * Keyword: {@code DUP} 
+     */ 
+    DUP,
 
     /** 
      * Keyword: {@code SWAP} 

@@ -21,7 +21,7 @@ import static org.jrpl.compiler.lexer.TokenType.*;
  * <pre>
  * program := ( {@code <<} instr* {@code >>} )? EOF
  * instr   := NUMBER
- *         |  DUP | DROP | SWAP
+ *         |  DROP | DUP | SWAP
  *         |  {@code +} | {@code -} | {@code *} | {@code /} | {@code ^}
  *         |  {@literal >} | {@literal <} | {@code >=} | {@code <=} | {@code ==} | {@code !=}
  *         |  IF THEN instr* (ELSE instr*)? END
@@ -93,8 +93,8 @@ public final class Parser {
 
             // Literals and stack ops
             case NUMBER -> { advance(); return new PushConst(t.value()); }
-            case DUP    -> { advance(); return Dup.INSTANCE; }
             case DROP   -> { advance(); return Drop.INSTANCE; }
+            case DUP    -> { advance(); return Dup.INSTANCE; }
             case SWAP   -> { advance(); return Swap.INSTANCE; }
 
             // Arithmetic operators

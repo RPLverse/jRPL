@@ -34,7 +34,7 @@ public record Token(TokenType type, String lexeme, double value, Span span) {
     /**
      * Creates a numeric token with its parsed {@code double} value.
      *
-     * @param s   lexeme string (e.g. "42", "3.14")
+     * @param s   lexeme string (e.g. "66", "3.14")
      * @param v   numeric value parsed from the lexeme
      * @param sp  span in the source
      * @return a new {@code Token}
